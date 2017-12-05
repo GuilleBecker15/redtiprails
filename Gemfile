@@ -62,7 +62,8 @@ end
 ################################################################################
 
 gem 'httparty', '~> 0.13.7' # gem install httparty -v 0.13.7 (quizas como admin)
-gem 'active_model_serializers', '~>0.8.1'
+# gem 'active_model_serializers', '~>0.8.1'
+gem 'active_model_serializers', github: "rails-api/active_model_serializers"
 gem 'rack-cors', :require => 'rack/cors'
 gem 'devise'
 gem 'bcrypt', '~> 3.1.7', platforms: :ruby

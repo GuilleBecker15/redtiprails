@@ -2,9 +2,16 @@ class Usuarios::RegistrationsController < Devise::RegistrationsController
   
   respond_to :json
   
+
   def create
     params.delete :registration
-    usuario = Usuario.new(usuario_params)
+    params.delete :type
+    p "------------ ----------------------"
+    # res = as_json(params[:data])
+    # p res 
+    
+    p "----------------------------------"
+    usuario = Usuario.new(usuario_params[:attributes])
     # usuario.skip_confirmation_notification!
     
     if usuario.save
@@ -15,7 +22,9 @@ class Usuarios::RegistrationsController < Devise::RegistrationsController
       # render :json =>{:success=>true, :message=>"El usuario se ha creado satisfactoriamente, se ha enviado un mail de confirmacion a su cuenta de correo electronico"}, :status=>201
 
       #Mientras tanto renderizo esto
-      render :json =>{:success=>true, :message=>"El usuario se ha creado satisfactoriamente, se ha enviado un mail de confirmacion a su cuenta de correo electronico",:id=>usuario.id, :email=>usuario.email, :confirmation_token=>usuario.confirmation_token}, :status=>201
+      # render :json =>{:success=>true, :_id=>usuario.id, :email=>usuario.email, :confirmation_token=>usuario.confirmation_token}, :status=>201
+      # render :json =>{:data=>{:id=>usuario.id, :attributes=>{:nickname=>usuario.nickname, :facebook=>usuario.facebook, :instagram=>usuario.instagram, :linkedin=>usuario.linkedin, :twitter=>usuario.twitter, :avatar=>usuario.avatar, :authentication_token=>usuario.authentication_token, :email=>usuario.email}, :type=>"usuario"}}
+      render json: usuario
       return
     
     else
@@ -57,11 +66,20 @@ class Usuarios::RegistrationsController < Devise::RegistrationsController
 
   def usuario_params
     
-    params.require(:usuario).permit(:nickname, :password, :email, :facebook, :twitter, :linkedin, :instagram, :avatar)
+    # params.require(:data).permit(:nickname, :password, :email, :facebook, :twitter, :linkedin, :instagram, :avatar, :type, :attributes )
+    # params.require(:data).permit(:type, :attributes )
+    params.require(:data).permit(:type, attributes:[ :avatar, :email, :facebook, :instagram, :linkedin, :nickname, :password, :'authentication-token', :twitter] )
     # params.permit(:nickname, :password, :email, :facebook, :twitter, :linkedin, :avatar, :registration)
   end
 
   protected
+
+  def book_params
+    res = ActiveModelSerializers::Deserialization.jsonapi_parse(params, polymorphic: [:usuario])
+    res[:publisher_type] = res[:publisher_type].singularize.capitalize
+    res
+  end
+
 
   def invalid_login_attempt
     # warden.custom_failure!
