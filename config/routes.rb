@@ -15,7 +15,7 @@ Rails.application.routes.draw do
 	
 	# get '/chat', 			to: 'mensajes#chat'
 	get '/debugger', 		to: 'debugger#index', as: 'debugger'
-	# get '/usuarios/find/:string', to: 'usuarios#find'
+	get '/usuarios/find', to: 'usuarios#find'
 	# get '/findusuario', 	to: 'usuarios#find'
 	
 	get '/usuarios', 		to: 'usuarios#index'

@@ -29,8 +29,8 @@ class Usuarios::RegistrationsController < Devise::RegistrationsController
     
     else
       # warden.custom_failure!
-      render :json =>{:success=>false, :message=>"repetido"}, :status=>422
-      # render :json => usuario.errors, :status => 422
+      # render :json =>{:success=>false, :message=>"repetido"}, :status=>422
+      render :json => {:errors => usuario.errors}
     
     end
   
@@ -68,7 +68,8 @@ class Usuarios::RegistrationsController < Devise::RegistrationsController
     
     # params.require(:data).permit(:nickname, :password, :email, :facebook, :twitter, :linkedin, :instagram, :avatar, :type, :attributes )
     # params.require(:data).permit(:type, :attributes )
-    params.require(:data).permit(:type, attributes:[ :avatar, :email, :facebook, :instagram, :linkedin, :nickname, :password, :'authentication-token', :twitter] )
+    params.require(:data).permit(:type, attributes:[ :avatar, :email, :facebook, :instagram, :linkedin, :nickname, :password, :authentication_token, :twitter] )
+    # params.require(:data).permit(:type, attributes:[ :avatar, :email, :facebook, :instagram, :linkedin, :nickname, :password, :'authentication-token', :twitter] )
     # params.permit(:nickname, :password, :email, :facebook, :twitter, :linkedin, :avatar, :registration)
   end
 

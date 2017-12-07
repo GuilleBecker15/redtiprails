@@ -1,2 +1,2 @@
-# ActiveModel::Serializer.config.adapter = :json_api
-# ActiveModelSerializers.config.adapter = ActiveModel::Serializer::Adapter::JsonApi
+ActiveModel::Serializer.config.adapter = :json_api
+# ActiveModelSerializers.config.adapter = ActiveModex	l::Serializer::Adapter::JsonApi
