@@ -14,6 +14,7 @@ class MensajesController < ApplicationController
 
   def create # POST
     @remitente = params[:id]
+    @emisor = @remitente
     @destinatario = params[:destinatario]
     @contenido = params[:contenido]
 
@@ -22,6 +23,11 @@ class MensajesController < ApplicationController
     @mensaje = Mensaje.create(:contenido => @contenido, :remitente_id => Usuario.find(@remitente).id, :destinatario_id => Usuario.find(@destinatario).id)
     
     if @mensaje.save 
+      @fecha = @mensaje.created_at.to_s
+      p "-------------antes!-------------"
+      p @fecha
+      p "-------------antes!-------------"
+      sendNodeMsj(@emisor, @destinatario, @contenido, @fecha)
       # mensaje = usuario.mensajes.new(contenido: params['contenido']);
       # mensaje = Mensaje.create(destinatario_id: usuario.id, contenido: params['contenido'], remitente_id: 1)
       # mensaje.save
@@ -67,6 +73,23 @@ class MensajesController < ApplicationController
     end
   end
 
+  def sendNodeMsj(remitente, destinatario, contenido, fecha)
+    @emisor = remitente
+    @receptor = destinatario
+    @mensaje = contenido
+    @fecha = fecha 
 
+    p "----------------------send----------------------"
+    p params
+    p fecha
+    p "----------------------send----------------------"
+    # Al servidor de Node en Heroku
+    # response = HTTParty.get('https://redtipsocket.herokuapp.com/mensaje?emisor='+remitente+'&mensaje='+@mensaje+'&receptor='+@receptor+'', :verify => false)
+    # ##################################
+    # Al servidor de Node en localhost.
+    # response = HTTParty.get('https://redtipsocket.herokuapp.com/mensaje?emisor='+remitente+'&mensaje='+@mensaje+'&receptor='+@receptor+'&created_at='+@fecha+'', :verify => false)
+    response = HTTParty.get('http://192.168.10.153:8080/mensaje?emisor='+remitente+'&mensaje='+@mensaje+'&receptor='+@receptor+'&created_at='+@fecha+'', :verify => false)
+    # ##################################
+  end
 
 end

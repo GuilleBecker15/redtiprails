@@ -90,10 +90,15 @@ class UsuariosController < ApplicationController
 
   def contactos
     @remitente = params[:id]
-    @ids = Mensaje.where(:remitente_id => @remitente).select(:destinatario_id).distinct
+    @idsuno = Mensaje.where(:remitente_id => @remitente).distinct.pluck(:destinatario_id)
+    @idsdos = Mensaje.where(:destinatario_id => @remitente).distinct.pluck(:remitente_id)
+    @ids = @idsuno|@idsdos
+      # @ids = Mensaje.where(Mensaje.where(:remitente_id => 24).select(:destinatario_id)).or(Mensaje.where(:destinatario_id => 24).select(:remitente_id)).distinct
+    # Mensaje.where('destinatario_id' => @destinatario).where('remitente_id' => @remitente).or(Mensaje.where('destinatario_id' => @remitente).where('remitente_id' => @destinatario)).order(created_at: :asc)#.select(:id, :contenido, :created_at )
+
     @contactos = []
     @ids.each do |id|
-      resource = Usuario.find(id.destinatario_id)
+      resource = Usuario.find(id)
       if(resource)
         @contactos.push(resource)
       end
@@ -108,7 +113,8 @@ class UsuariosController < ApplicationController
     p "-------------------------"
     @search = params[:search]
     # @result = Usuario.where(:nickname => params[:string]).or(Usuario.where(:email => params[:string]))
-    @result = Usuario.where("nickname like ?", "#{@search}%").or(Usuario.where("email like ?", "#{@search}%")).where.not('confirmed_at' => nil)
+    # @result = Usuario.where("nickname like ?", "#{@search}%").or(Usuario.where("email like ?", "#{@search}%")).where.not('confirmed_at' => nil)
+    @result = Usuario.where("nickname like ?", "#{@search}%").or(Usuario.where("email like ?", "#{@search}%"))
     if(@result && @result.count > 0)
       render :json=>{:success=>true, :result=>@result},:status=>200
     else
@@ -138,7 +144,9 @@ class UsuariosController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def usuario_params
-     params.require(:usuario).permit(:nickname, :password, :email, :facebook, :twitter, :linkedin, :instagram, :avatar)
+    params.require(:data).permit(:nickname, :password, :email, :facebook, :twitter, :linkedin, :instagram, :avatar, :type, :attributes )
+    
+     # params.require(:usuario).permit(:nickname, :password, :email, :facebook, :twitter, :linkedin, :instagram, :avatar)
      # params.permit(:nickname, :password, :email, :facebook, :twitter, :linkedin, :instagram, :avatar)
   end
 
